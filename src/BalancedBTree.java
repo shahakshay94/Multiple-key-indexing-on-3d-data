@@ -154,7 +154,6 @@ class BalancingBinarySearchTree implements Runnable {
 
 
   public String getHashOfTuple(String s) throws NoSuchAlgorithmException {
-    byte[] hash = null;
     String encryptedString = null;
     try {
       MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
@@ -201,38 +200,27 @@ public class BalancedBTree {
       //  System.out.println(st.replace("(", "").split(",")[0]);
       String tuple = st.replace("(", "").replace(")", "");
       String index[] = st.replace("(", "").replace(")", "").split(",");
-      index_X_Tree.insert(Double.parseDouble(index[0]), tuple.trim());
-      index_Y_Tree.insert(Double.parseDouble(index[1]), tuple.trim());
-      index_Z_Tree.insert(Double.parseDouble(index[2]), tuple.trim());
+      index_X_Tree.insert(Double.parseDouble(index[0]), tuple.trim());//B-Tree for X index
+      index_Y_Tree.insert(Double.parseDouble(index[1]), tuple.trim());//B-Tree for Y index
+      index_Z_Tree.insert(Double.parseDouble(index[2]), tuple.trim());//B-Tree for Z index
       indexedTuple.add(tuple.trim());
       counter++;
     }
-    System.out.println("Indexing done " + counter);
+    System.out.println("Indexing done for  " + counter + " tuples");
     Scanner sc = new Scanner(System.in);
     System.out.println("for Query x1<X<x2 : please enter x1");
     index_X_Tree.greaterthan = sc.nextInt();
     System.out.println("For Query x1<X<x2 : Please enter x2");
     index_X_Tree.lessthan = sc.nextInt();
-    System.out.println("for Query y1<X<y2 : please enter y1");
+    System.out.println("for Query y1<Y<y2 : please enter y1");
     index_Y_Tree.greaterthan = sc.nextInt();
-    System.out.println("For Query y1<X<y2 : Please enter y2");
+    System.out.println("For Query y1<Y<y2 : Please enter y2");
     index_Y_Tree.lessthan = sc.nextInt();
-    System.out.println("for Query z1<X<z2 : please enter z1");
+    System.out.println("for Query z1<Z<z2 : please enter z1");
     index_Z_Tree.greaterthan = sc.nextInt();
-    System.out.println("For Query z1<X<z2 : Please enter z2");
+    System.out.println("For Query z1<Z<z2 : Please enter z2");
     index_Z_Tree.lessthan = sc.nextInt();
 
-    /*System.out.println("\nPre-order  :");
-    Thread thread = new Thread(index_X_Tree);
-    thread.start();
-    Thread thread2 = new Thread(index_Y_Tree);
-    thread2.start();
-    Thread thread3 = new Thread(index_Z_Tree);
-    thread3.start();
-
-    thread.join();
-    thread2.join();
-    thread3.join();*/
     index_X_Tree.writer = new PrintWriter("x", "UTF-8");
     index_Y_Tree.writer = new PrintWriter("y", "UTF-8");
     index_Z_Tree.writer = new PrintWriter("z", "UTF-8");
@@ -244,8 +232,6 @@ public class BalancedBTree {
     long endTime = System.nanoTime();
     long totalTime = endTime - startTime;
     System.out.println("Total Time " + totalTime + "nano seconds");
-    System.out.println("Matched tuples Found");
-    System.out.println("Mached tuples before");
 
     /*System.out.println(finalTuples.size());
     for (String tuple : index_X_Tree.machedTuples.subList(0, index_X_Tree.machedTuples.size() / 3)) {
@@ -265,13 +251,13 @@ public class BalancedBTree {
     //System.out.println(index_X_Tree.machedTuples);
     //  System.out.println(index_X_Tree.machedTuples.retainAll(index_Y_Tree.machedTuples));
     //  System.out.println(index_X_Tree.machedTuples.retainAll(index_Z_Tree.machedTuples));
-    System.out.println("Mached tuples ");
     //System.out.println(index_X_Tree.machedTuples);
     String formattedValues = String.join("\n", finalTuples)
         .replaceAll("(\\w*,\\w*,\\w*,)", "$1" + System.lineSeparator());
     //System.out.println(formattedValues);
     PrintWriter writer = new PrintWriter("FinalResult", "UTF-8");
     writer.write(formattedValues);
+    System.out.println("Result is written in FinalResult.txt");
     writer.close();
     scan.close();
   }
