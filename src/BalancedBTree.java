@@ -5,12 +5,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 class Nodes {
@@ -37,12 +37,12 @@ class BalancingBinarySearchTree implements Runnable {
   private String fileName;
   public double lessthan;
   public double greaterthan;
-  HashMap<String, List<String>> machedTup;
+  HashMap<Integer, List<String>> machedTup;
 
   public BalancingBinarySearchTree(String fileName) {
     root = null;
     this.fileName = fileName;
-    this.machedTup = new HashMap<String, List<String>>();
+    this.machedTup = new HashMap<Integer, List<String>>();
   }
 
 
@@ -84,7 +84,13 @@ class BalancingBinarySearchTree implements Runnable {
         }
       }
     } else {
-      ;
+      try {
+        ArrayList<String> temp = new ArrayList<String>();
+        temp.add(tuple);
+        machedTup.put(getHashOfTuple(tuple), temp);
+      } catch (NoSuchAlgorithmException e) {
+        e.printStackTrace();
+      }
     }
     t.height = max(height(t.left), height(t.right)) + 1;
     return t;
@@ -132,20 +138,26 @@ class BalancingBinarySearchTree implements Runnable {
   private void preorder(Nodes r)
       throws NoSuchAlgorithmException {
     if (r != null) {
+      Integer hash = getHashOfTuple(r.tuple.trim());
       if (r.data <= lessthan && r.data >= greaterthan) {
         //  System.out.println(
         //  "data " + r.data + "is less than" + lessthan + " and greater than " + greaterthan
         //   + " Adding in the mached tuples" + " tuple is " + r.tuple);
         writer.append(r.tuple + "\n");
-        String hash = getHashOfTuple(r.tuple);
+
         if (machedTup.containsKey(hash)) {
           machedTup.get(hash).add(r.tuple);
-          System.out.println("duplicate tuple" + r.tuple);
+          // System.out.println("duplicate tuple" + r.tuple);
         } else {
           ArrayList<String> temp = new ArrayList<String>();
           temp.add(r.tuple);
           machedTup.put(hash, temp);
         }
+      } else {
+        if (machedTup.containsKey(hash)) {
+          machedTup.remove(hash);
+        }
+
       }
       preorder(r.left);
       preorder(r.right);
@@ -153,16 +165,13 @@ class BalancingBinarySearchTree implements Runnable {
   }
 
 
-  public String getHashOfTuple(String s) throws NoSuchAlgorithmException {
+  public int getHashOfTuple(String s) throws NoSuchAlgorithmException {
     String encryptedString = null;
-    try {
-      MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-      messageDigest.update(s.getBytes());
-      encryptedString = new String(messageDigest.digest());
-    } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
+    int hash = 7;
+    for (int i = 0; i < s.length(); i++) {
+      hash = hash * 31 + s.charAt(i);
     }
-    return encryptedString;
+    return hash;
   }
 
   @Override
@@ -189,7 +198,7 @@ public class BalancedBTree {
     BalancingBinarySearchTree index_X_Tree = new BalancingBinarySearchTree("x");
     BalancingBinarySearchTree index_Y_Tree = new BalancingBinarySearchTree("y");
     BalancingBinarySearchTree index_Z_Tree = new BalancingBinarySearchTree("z");
-    File file = new File("C:\\Users\\prash\\Downloads\\LA2_10.txt");
+    File file = new File("C:\\Users\\ppatel\\Downloads\\LA2.txt");
     BufferedReader br = new BufferedReader(new FileReader(file));
 
     String st;
@@ -243,7 +252,7 @@ public class BalancedBTree {
     index_X_Tree.machedTup.keySet().retainAll(index_Z_Tree.machedTup.keySet());
     System.out.println("Total Matched Tuples" + index_X_Tree.machedTup.values().size());
     ArrayList<String> finalTuples = new ArrayList<String>();
-    for (Map.Entry<String, List<String>> entry : index_X_Tree.machedTup.entrySet()) {
+    for (Entry<Integer, List<String>> entry : index_X_Tree.machedTup.entrySet()) {
 
       finalTuples.addAll(entry.getValue());
     }
