@@ -17,7 +17,7 @@ import MultipleKeyIndex.XIndex;
 import MultipleKeyIndex.YIndex;
 
 public class Main {
-	private static String inputFilePath = "C:\\Users\\Quoc Minh Vu\\EclipseWorkspace\\COMP6521_LAB2\\src\\input\\LA2.txt";
+	private static String inputFilePath = "C:\\Users\\Quoc Minh Vu\\EclipseWorkspace\\COMP6521_LAB2\\src\\input\\LA2_duplicate.txt";
 	private static String outputPath = "C:\\Users\\Quoc Minh Vu\\EclipseWorkspace\\COMP6521_LAB2\\src\\output\\";
 	private static int noOfBuckets = 1000;
 	private static Scanner scanner;
@@ -31,7 +31,7 @@ public class Main {
 			System.out.println("1. Build Index");
 			System.out.println("2. Range Query");
 			System.out.println("3. Nearest-neighbor Query");
-			System.out.println("4. Exit");
+			System.out.println("0. Exit");
 			System.out.print("Your choice: ");
 			userChoice = scanner.next();
 			System.out.println("--------------------------");
@@ -45,7 +45,7 @@ public class Main {
 				case "3":
 					query2(root);
 					break;
-				case "4":
+				case "0":
 					return;
 				default:
 					break;
@@ -58,34 +58,30 @@ public class Main {
 			System.out.println("There is no Index");
 			return;
 		}
+		
 		double x1, x2, y1, y2, z1, z2;
 		while (true) {
-			System.out.println("-------------------");
+			System.out.println("--------------------------");
 			System.out.print("Enter x1: "); x1 = scanner.nextDouble();
 			System.out.print("Enter x2: "); x2 = scanner.nextDouble();
 			System.out.print("Enter y1: "); y1 = scanner.nextDouble();
 			System.out.print("Enter y2: "); y2 = scanner.nextDouble();
 			System.out.print("Enter z1: "); z1 = scanner.nextDouble();
 			System.out.print("Enter z2: "); z2 = scanner.nextDouble();
-			System.out.print("-------------------");
+			System.out.println("--------------------------");
 			if (x1 < x2 && y1 < y2 && z1 < z2)
 				break;
 			else
 				System.out.println("Invalid range");
 		}
 		
-		long startTime2 = System.nanoTime();
-		List<Point> query1Result = doRangeQuery(root, x1, x2, y1, y2, z1, z2);
-		long endTime2 = System.nanoTime();
-		System.out.println("Result size = " + query1Result.size());
-		System.out.printf("Query 1 time: %d(s) %n", ((endTime2 - startTime2) / 1000000000));
-		System.out.println();
+		List<Point> queryResult = doRangeQuery(root, x1, x2, y1, y2, z1, z2);
 		while (true) {
 			System.out.print("Export result to file? (Y/N): "); String userChoice = scanner.next();
 			switch (userChoice) {
 				case "Y":
 				case "y":
-					dumpResultToFile(query1Result);
+					dumpResultToFile(outputPath + "range_query_result.txt", queryResult);
 					return;
 				case "N":
 				case "n":
@@ -94,10 +90,10 @@ public class Main {
 					break;
 			}
 		}
-		
 	}
 	
 	private static List<Point> doRangeQuery(RootIndex root, double x1, double x2, double y1, double y2, double z1, double z2) {
+		long startTime = System.nanoTime();
 		List<Point> result = new ArrayList<>();
 		List<XIndex> xIndexList = root.getValueOfRange(x1, x2);
 		for (XIndex xIndex : xIndexList) {
@@ -113,6 +109,8 @@ public class Main {
 				}
 			}
 		}
+		System.out.println("Result size = " + result.size());
+		System.out.printf("Query time: %d(ms) %n", ((System.nanoTime() - startTime) / 1000000));
 		return result;
 	}	
 	
@@ -121,6 +119,39 @@ public class Main {
 			System.out.println("There is no Index");
 			return;
 		}
+		
+		System.out.println("--------------------------");
+		System.out.print("Enter x: "); double x = scanner.nextDouble();
+		System.out.print("Enter y: "); double y = scanner.nextDouble();
+		System.out.print("Enter z: "); double z = scanner.nextDouble();
+		System.out.println("--------------------------");
+		
+		List<Point> queryResult = doNearestNeighborQuery(root, x, y, z);
+		while (true) {
+			System.out.print("Export result to file? (Y/N): "); String userChoice = scanner.next();
+			switch (userChoice) {
+				case "Y":
+				case "y":
+					dumpResultToFile(outputPath + "nearest_neighbor_result.txt", queryResult);
+					return;
+				case "N":
+				case "n":
+					return;
+				default:
+					break;
+			}
+		}
+	}
+	
+	private static List<Point> doNearestNeighborQuery(RootIndex root, double x, double y, double z) {
+		long startTime = System.nanoTime();
+		List<Point> result = new ArrayList<>();
+		
+		
+		
+		System.out.println("Result size = " + result.size());
+		System.out.printf("Query time: %d(ms) %n", ((System.nanoTime() - startTime) / 1000000));
+		return null;
 	}
 	
 	private static RootIndex buildIndex() {
@@ -157,7 +188,7 @@ public class Main {
 			}
 			rootIndex.addNewItem(xLowerBound, xUpperBound, xIndex);
 		}
-		System.out.printf("Build Index time: %d(s) %n", ((System.nanoTime() - startTime1) / 1000000000));
+		System.out.printf("Build Index time: %d(ms) %n", ((System.nanoTime() - startTime1) / 1000000));
 		return rootIndex;
 	}
 	
@@ -194,10 +225,10 @@ public class Main {
 		return result;
 	}
 	
-	private static void dumpResultToFile(List<Point> points) {
+	private static void dumpResultToFile(String filePath, List<Point> points) {
 		BufferedWriter bw = null;
 		try {
-			bw = new BufferedWriter(new FileWriter(outputPath + "range_query_result.txt"));
+			bw = new BufferedWriter(new FileWriter(filePath));
 			for (Point point : points) {
 				bw.write(point.toString());
 				bw.newLine();
