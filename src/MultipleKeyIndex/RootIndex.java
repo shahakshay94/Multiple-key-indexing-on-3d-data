@@ -23,9 +23,9 @@ private Map<String, XIndex> hashMap = null;
 			String entryRange = entry.getKey();
 			double entryLowerBound = Double.valueOf(entryRange.split("-")[0]);
 			double entryUpperBound = Double.valueOf(entryRange.split("-")[1]);
-			if ((entryLowerBound <= lowerBound && entryUpperBound >= upperBound) ||
-					(entryLowerBound >= lowerBound && entryUpperBound <= upperBound) ||
-					(entryLowerBound <= upperBound && entryUpperBound >= lowerBound)) {
+			if ((entryLowerBound <= lowerBound && entryUpperBound > upperBound) ||
+					(entryLowerBound >= lowerBound && entryUpperBound < upperBound) ||
+					(entryLowerBound <= upperBound && entryUpperBound > lowerBound)) {
 				result.add(entry.getValue());
 			}
 		}
