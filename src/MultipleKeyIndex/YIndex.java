@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import main.PointList;
 
 public class YIndex {	
-private Map<String, PointList> hashMap = null;
+	private Map<String, PointList> hashMap = null;
 	
 	public YIndex() {
 		this.hashMap = new HashMap<>();
@@ -19,7 +19,7 @@ private Map<String, PointList> hashMap = null;
 		this.hashMap.put(String.format("%f-%f", lowerBound, upperBound), value);
 	}
 	
-	public List<PointList> getValueOfRange(double lowerBound, double upperBound) {
+	public List<PointList> getIndexesOfRange(double lowerBound, double upperBound) {
 		List<PointList> result = new ArrayList<>();
 		for (Entry<String, PointList> entry : hashMap.entrySet()) {
 			String entryRange = entry.getKey();

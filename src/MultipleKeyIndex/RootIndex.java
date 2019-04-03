@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class RootIndex {	
-private Map<String, XIndex> hashMap = null;
+	private Map<String, XIndex> hashMap = null;
 	
 	public RootIndex() {
 		this.hashMap = new HashMap<>();
@@ -17,7 +17,7 @@ private Map<String, XIndex> hashMap = null;
 		this.hashMap.put(String.format("%f-%f", lowerBound, upperBound), value);
 	}
 	
-	public List<XIndex> getValueOfRange(double lowerBound, double upperBound) {
+	public List<XIndex> getIndexesOfRange(double lowerBound, double upperBound) {
 		List<XIndex> result = new ArrayList<>();
 		for (Entry<String, XIndex> entry : hashMap.entrySet()) {
 			String entryRange = entry.getKey();

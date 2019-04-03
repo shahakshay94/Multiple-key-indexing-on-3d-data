@@ -17,32 +17,28 @@ import MultipleKeyIndex.XIndex;
 import MultipleKeyIndex.YIndex;
 
 public class Main {
-	private static String inputFilePath = "C:\\Users\\Quoc Minh Vu\\EclipseWorkspace\\COMP6521_LAB2\\src\\input\\LA2_duplicate.txt";
+	private static String inputFilePath = "C:\\Users\\Quoc Minh Vu\\EclipseWorkspace\\COMP6521_LAB2\\src\\input\\LA2.txt";
 	private static String outputPath = "C:\\Users\\Quoc Minh Vu\\EclipseWorkspace\\COMP6521_LAB2\\src\\output\\";
 	private static int noOfBuckets = 1000;
 	private static Scanner scanner;
 	
 	public static void main(String[] args) {
 		String userChoice = "";
-		RootIndex root = null;
+		RootIndex root = buildIndex();
 		while (true) {
 			scanner = new Scanner(System.in);
 			System.out.println("-----------MENU-----------");
-			System.out.println("1. Build Index");
-			System.out.println("2. Range Query");
-			System.out.println("3. Nearest-neighbor Query");
+			System.out.println("1. Range Query");
+			System.out.println("2. Nearest-neighbor Query");
 			System.out.println("0. Exit");
 			System.out.print("Your choice: ");
 			userChoice = scanner.next();
 			System.out.println("--------------------------");
 			switch (userChoice) {
 				case "1":
-					root = buildIndex();
-					break;
-				case "2":
 					query1(root);
 					break;
-				case "3":
+				case "2":
 					query2(root);
 					break;
 				case "0":
@@ -95,11 +91,11 @@ public class Main {
 	private static List<Point> doRangeQuery(RootIndex root, double x1, double x2, double y1, double y2, double z1, double z2) {
 		long startTime = System.nanoTime();
 		List<Point> result = new ArrayList<>();
-		List<XIndex> xIndexList = root.getValueOfRange(x1, x2);
+		List<XIndex> xIndexList = root.getIndexesOfRange(x1, x2);
 		for (XIndex xIndex : xIndexList) {
-			List<YIndex> yIndexList = xIndex.getValueOfRange(y1, y2);
+			List<YIndex> yIndexList = xIndex.getIndexesOfRange(y1, y2);
 			for (YIndex yIndex : yIndexList) {
-				List<PointList> zIndex = yIndex.getValueOfRange(z1, z2);
+				List<PointList> zIndex = yIndex.getIndexesOfRange(z1, z2);
 				for (PointList pointList : zIndex) {
 					for (Point point : pointList) {
 						if (point.isInRange(x1, x2, y1, y2, z1, z2)) {
