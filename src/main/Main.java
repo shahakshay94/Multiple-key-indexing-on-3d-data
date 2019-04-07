@@ -20,7 +20,8 @@ public class Main {
 	private static String inputFilePath = "C:\\Users\\Quoc Minh Vu\\EclipseWorkspace\\COMP6521_LAB2\\src\\input\\LA2.txt";
 	private static String outputPath = "C:\\Users\\Quoc Minh Vu\\EclipseWorkspace\\COMP6521_LAB2\\src\\output\\";
 	private static int bucketSize = 1000;
-	private static double scanRadius = 10;
+//	private static double scanRadius = 10;
+	private static double minXValue, maxXValue, pointCount;
 	private static Scanner scanner;
 	
 	public static void main(String[] args) {
@@ -122,6 +123,7 @@ public class Main {
 	private static List<Point> doNearestNeighborQuery(RootIndex root, double x, double y, double z) {
 		Point center = new Point(x, y, z);
 		
+		double scanRadius = ((Math.abs(maxXValue) - Math.abs(minXValue)) / pointCount) * 100000;
 		double x1 = x - scanRadius;
 		double x2 = x + scanRadius;
 		double y1 = y - scanRadius;
@@ -198,6 +200,9 @@ public class Main {
 	
 	private static Map<String, PointList> hash(PointList pointList, String dimension) {
 		pointList.sort(pointList, 0, pointList.size() - 1, dimension);
+		minXValue = pointList.get(0).getDimension("X");
+		maxXValue = pointList.get(pointList.size() - 1).getDimension("X");
+		pointCount = pointList.size();
 		return pointList.divideIntoBuckets(bucketSize, dimension);
 	}
 	
